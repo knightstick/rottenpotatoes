@@ -2,7 +2,17 @@
 class MoviesController < ApplicationController
 
   def index
-      @movies = Movie.all(order: params[:sort])
+      @order = params[:sort]
+      @all_ratings = Movie.all_ratings
+      if ! params[:ratings].nil?
+        @ratings = params[:ratings].map {|k,v| k if v}.compact unless 
+params[:ratings].nil?
+      else
+        @ratings = @all_ratings
+      end
+      @movies = Movie.find(:all, :order => params[:sort], 
+                  :conditions => ["rating IN (?)", @ratings])
+      
   end
 
   def show
